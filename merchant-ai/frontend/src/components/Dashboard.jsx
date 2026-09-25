@@ -14,40 +14,6 @@ import OutcomeCard from "./OutcomeCard.jsx";
 
 const EMPTY = { overview: null, anomaly: null, recent: null, actions: [], status: null, learning: null };
 
-const mkIcon = (path) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-    {path}
-  </svg>
-);
-
-const KPI_ICONS = {
-  list: mkIcon(<><path d="M8 6h13" /><path d="M8 12h13" /><path d="M8 18h13" /><path d="M3 6h.01" /><path d="M3 12h.01" /><path d="M3 18h.01" /></>),
-  check: mkIcon(<><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="M22 4 12 14.01l-3-3" /></>),
-  x: mkIcon(<><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></>),
-  percent: mkIcon(<><line x1="19" y1="5" x2="5" y2="19" /><circle cx="6.5" cy="6.5" r="2.5" /><circle cx="17.5" cy="17.5" r="2.5" /></>),
-  rupee: mkIcon(<><path d="M6 3h12" /><path d="M6 8h12" /><path d="M6 13h4a4 4 0 0 0 0-8" /><path d="m6 13 8 8" /></>),
-  sparkle: mkIcon(<><path d="M12 3v4" /><path d="M12 17v4" /><path d="M3 12h4" /><path d="M17 12h4" /><path d="m5.6 5.6 2.8 2.8" /><path d="m15.6 15.6 2.8 2.8" /><path d="m18.4 5.6-2.8 2.8" /><path d="m8.4 15.6-2.8 2.8" /></>),
-  clock: mkIcon(<><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></>),
-};
-
-const NAV_ICONS = {
-  overview: mkIcon(<><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></>),
-  leakage: mkIcon(<><path d="M3 17l6-6 4 4 8-8" /><path d="M17 7h4v4" /></>),
-  failures: mkIcon(<><circle cx="12" cy="12" r="10" /><path d="M12 8v4" /><path d="M12 16h.01" /></>),
-  ai: mkIcon(<><rect x="4" y="4" width="16" height="16" /><path d="M9 9h6v6H9z" /><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3" /></>),
-  actions: mkIcon(<><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" /></>),
-  outcomes: mkIcon(<><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5" /></>),
-};
-
-const NAV_SECTIONS = [
-  { id: "overview", label: "Overview", sub: "Command Center", icon: "overview" },
-  { id: "leakage", label: "Revenue Leakage", sub: "At-Risk Analysis", icon: "leakage" },
-  { id: "failures", label: "Payment Failures", sub: "Failure Ledger", icon: "failures" },
-  { id: "investigation", label: "AI Investigation", sub: "Reasoning & Tools", icon: "ai" },
-  { id: "actions", label: "Recovery Actions", sub: "Approval & Retry", icon: "actions" },
-  { id: "outcomes", label: "Outcomes & Learning", sub: "Learned Rates & Audit", icon: "outcomes" },
-];
-
 export default function Dashboard() {
   const [data, setData] = useState(EMPTY);
   const [backendError, setBackendError] = useState(null);
@@ -57,9 +23,7 @@ export default function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [flow, setFlow] = useState({ step: "idle", error: null });
   const [busy, setBusy] = useState(false);
-  const [activeSection, setActiveSection] = useState("overview");
   const runningRef = useRef(false);
-  const sectionRefs = useRef({});
 
   const loadAll = useCallback(async () => {
     try {
@@ -82,13 +46,6 @@ export default function Dashboard() {
   const action = data.actions[0] || null;
   const o = data.overview;
   const aiOnline = data.status?.ollama_online && !backendError;
-  const anomalyOn = data.anomaly?.anomaly_detected;
-  const recoveryDone = !!action?.outcome;
-
-  function goTo(id) {
-    setActiveSection(id);
-    sectionRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
 
   async function runAgent() {
     setRunning(true);
@@ -155,9 +112,9 @@ export default function Dashboard() {
   }
 
   const noticeStyle = {
-    success: "bg-emerald-100 text-emerald-900",
-    info: "bg-sky-100 text-sky-900",
-    error: "bg-red-100 text-red-900",
+    success: "border-emerald-200 bg-emerald-50 text-emerald-800",
+    info: "border-sky-200 bg-sky-50 text-sky-800",
+    error: "border-red-200 bg-red-50 text-red-800",
   };
 
   return (
@@ -167,121 +124,88 @@ export default function Dashboard() {
       </video>
       <div className="bg-video-overlay" />
 
-      <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b-[3px] border-black bg-white px-6 py-3">
-        <div className="flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center border-[3px] border-black bg-paytm-navy font-display text-lg font-extrabold text-white">
-            ₹
-          </div>
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-3 px-6 py-3">
           <div>
-            <div className="font-display text-lg font-extrabold uppercase tracking-tight text-paytm-navy">
-              Paytm <span className="text-paytm-blue">Autonomous AI</span>
+            <div className="text-lg font-extrabold tracking-tight text-paytm-navy">
+              PAYTM <span className="text-paytm-blue">MERCHANT AI</span>
             </div>
-            <div className="text-[11px] font-bold uppercase tracking-wide text-black/50">Merchant Operations Command Center</div>
+            <div className="text-xs text-slate-500">Autonomous Revenue Recovery Teammate</div>
           </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          {anomalyOn && (
-            <span className="nb-pill bg-red-100 text-red-700">
-              ⚠ Anomaly Active (+{data.anomaly.increase_percentage_points} pp)
+          <div className="flex items-center gap-4">
+            <span className={`text-xs font-bold tracking-wide ${aiOnline ? "text-emerald-600" : "text-red-600"}`}>
+              ● {aiOnline ? "AI ONLINE" : "AI OFFLINE"}
             </span>
-          )}
-          {recoveryDone && <span className="nb-pill bg-paytm-navy text-white">■ Recovery Completed</span>}
-          <span className={`nb-pill ${aiOnline ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"}`}>
-            <span className={`h-2 w-2 rounded-full ${aiOnline ? "bg-emerald-500 pulse-dot" : "bg-red-500"}`} />
-            {aiOnline ? "AI Online" : "AI Offline"}
-          </span>
-          <button onClick={resetDemo} className="nb-btn nb-btn-ghost">↺ Reset Demo</button>
-          <ClickSpark sparkColor="#00B9F1" sparkSize={10} sparkRadius={20} sparkCount={10} duration={450}>
-            <button onClick={runAgent} disabled={running || !!backendError} className="nb-btn nb-btn-primary">
-              ▶ {running ? "AI Investigating…" : "Run AI Investigation"}
+            <button onClick={resetDemo} className="text-xs font-medium text-slate-400 hover:text-slate-600">
+              Reset demo
             </button>
-          </ClickSpark>
+            <ClickSpark sparkColor="#00B9F1" sparkSize={10} sparkRadius={20} sparkCount={10} duration={450}>
+              <button onClick={runAgent} disabled={running || !!backendError}
+                className="rounded-lg bg-paytm-navy px-5 py-2.5 text-xs font-bold tracking-wide text-white hover:bg-[#001f55] disabled:opacity-50">
+                {running ? "AI INVESTIGATING…" : "RUN AI INVESTIGATION"}
+              </button>
+            </ClickSpark>
+          </div>
         </div>
       </header>
 
-      <div className="flex">
-        <aside className="sticky top-[73px] hidden h-[calc(100vh-73px)] w-64 shrink-0 overflow-y-auto border-r-[3px] border-black bg-white p-4 lg:block">
-          <div className="mb-3 text-[11px] font-extrabold uppercase tracking-wide text-black/40">Operations Pipeline</div>
-          {NAV_SECTIONS.map((s) => (
-            <button key={s.id} onClick={() => goTo(s.id)} className={`nb-nav-item ${activeSection === s.id ? "active" : ""}`}>
-              <span className={`grid h-8 w-8 shrink-0 place-items-center border-[2px] ${activeSection === s.id ? "border-white" : "border-black"}`}>
-                {NAV_ICONS[s.icon]}
-              </span>
-              <span>
-                <div className="text-xs font-extrabold uppercase tracking-wide">{s.label}</div>
-                <div className={`text-[10px] font-medium normal-case ${activeSection === s.id ? "text-white/70" : "text-black/40"}`}>{s.sub}</div>
-              </span>
-            </button>
-          ))}
-        </aside>
+      <main className="mx-auto max-w-[1400px] space-y-5 px-6 py-6">
+        {backendError && (
+          <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">{backendError}</div>
+        )}
+        {!backendError && data.status && !data.status.ollama_online && (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+            Local AI (Ollama) is offline. Analytics still work, but AI investigation is unavailable. Start Ollama and refresh.
+          </div>
+        )}
+        {!backendError && o && o.total_transactions === 0 && (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+            The database has no transactions. Run <code>python seed_data.py</code> in the backend folder.
+          </div>
+        )}
+        {notice && (
+          <div className={`flex items-start justify-between rounded-lg border p-3 text-sm ${noticeStyle[notice.type]}`}>
+            <span>{notice.text}</span>
+            <button className="ml-4 text-xs opacity-60 hover:opacity-100" onClick={() => setNotice(null)}>Dismiss</button>
+          </div>
+        )}
 
-        <main className="min-w-0 flex-1 space-y-6 px-6 py-6">
-          {backendError && (
-            <div className="animate-fade-in-up border-[3px] border-black bg-red-100 p-3 text-sm font-semibold text-red-900">{backendError}</div>
-          )}
-          {!backendError && data.status && !data.status.ollama_online && (
-            <div className="animate-fade-in-up border-[3px] border-black bg-amber-100 p-3 text-sm font-semibold text-amber-900">
-              Local AI (Ollama) is offline. Analytics still work, but AI investigation is unavailable. Start Ollama and refresh.
-            </div>
-          )}
-          {!backendError && o && o.total_transactions === 0 && (
-            <div className="animate-fade-in-up border-[3px] border-black bg-amber-100 p-3 text-sm font-semibold text-amber-900">
-              The database has no transactions. Run <code>python seed_data.py</code> in the backend folder.
-            </div>
-          )}
-          {notice && (
-            <div className={`flex animate-fade-in-up items-start justify-between border-[3px] border-black p-3 text-sm font-semibold ${noticeStyle[notice.type]}`}>
-              <span>{notice.text}</span>
-              <button className="ml-4 text-xs font-extrabold uppercase opacity-60 hover:opacity-100" onClick={() => setNotice(null)}>Dismiss</button>
-            </div>
-          )}
+        <section className="grid grid-cols-2 gap-3 md:grid-cols-4 2xl:grid-cols-7">
+          <KpiCard label="Total Transactions" value={o ? o.total_transactions : "—"} />
+          <KpiCard label="Successful Transactions" value={o ? o.successful_transactions : "—"} tone="success" />
+          <KpiCard label="Failed Transactions" value={o ? o.failed_transactions : "—"} tone="danger" />
+          <KpiCard label="Failure Rate" value={o ? pct(o.failure_rate_percent) : "—"} tone="danger" />
+          <KpiCard label="Revenue at Risk" value={o ? inr(o.failed_transaction_value) : "—"} tone="warn" hint="Total failed value" />
+          <KpiCard label="AI Recovered Revenue" value={o ? inr(o.ai_recovered_revenue) : "—"} tone="success" hint="Simulated" />
+          <KpiCard label="Pending Approvals" value={o ? o.pending_approvals : "—"} tone={o?.pending_approvals ? "warn" : "default"} />
+        </section>
 
-          <section id="overview" ref={(el) => (sectionRefs.current.overview = el)} className="scroll-mt-24 space-y-3">
-            <h2 className="font-display text-lg font-extrabold uppercase tracking-wide text-black">Overview</h2>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
-              <KpiCard label="Total Transactions" value={o ? o.total_transactions : "—"} icon={KPI_ICONS.list} />
-              <KpiCard label="Successful Transactions" value={o ? o.successful_transactions : "—"} tone="success" icon={KPI_ICONS.check} />
-              <KpiCard label="Failed Transactions" value={o ? o.failed_transactions : "—"} tone="danger" icon={KPI_ICONS.x} />
-              <KpiCard label="Failure Rate" value={o ? pct(o.failure_rate_percent) : "—"} tone="danger" icon={KPI_ICONS.percent} />
-              <KpiCard label="Revenue at Risk" value={o ? inr(o.failed_transaction_value) : "—"} tone="warn" hint="Total failed value" icon={KPI_ICONS.rupee} />
-              <KpiCard label="AI Recovered Revenue" value={o ? inr(o.ai_recovered_revenue) : "—"} tone="success" hint="Simulated" icon={KPI_ICONS.sparkle} />
-              <KpiCard label="Pending Approvals" value={o ? o.pending_approvals : "—"} tone={o?.pending_approvals ? "warn" : "default"} icon={KPI_ICONS.clock} />
-            </div>
-          </section>
-
-          <section id="leakage" ref={(el) => (sectionRefs.current.leakage = el)} className="scroll-mt-24 space-y-3">
-            <h2 className="font-display text-lg font-extrabold uppercase tracking-wide text-black">Revenue Leakage</h2>
+        <section className="grid gap-5 lg:grid-cols-3">
+          <div className="lg:col-span-2">
             <AnomalyCard anomaly={data.anomaly} statusLabel={agentLabel(running, action)} />
-          </section>
+          </div>
+          <FailureBreakdown recent={data.recent} />
+        </section>
 
-          <section id="failures" ref={(el) => (sectionRefs.current.failures = el)} className="scroll-mt-24">
-            <FailureBreakdown recent={data.recent} />
-          </section>
-
-          <section id="investigation" ref={(el) => (sectionRefs.current.investigation = el)} className="scroll-mt-24">
+        <section className="grid gap-5 lg:grid-cols-3">
+          <div className="lg:col-span-2">
             <AiInvestigation investigation={action?.investigation} running={running} stage={stage} />
-          </section>
-
-          <section id="actions" ref={(el) => (sectionRefs.current.actions = el)} className="scroll-mt-24">
+          </div>
+          <div className="space-y-5">
             <ActionCenter action={action} busy={busy}
               onApprove={() => { setFlow({ step: "idle", error: null }); setModalOpen(true); }}
               onReject={rejectAction} />
-          </section>
-
-          <section id="outcomes" ref={(el) => (sectionRefs.current.outcomes = el)} className="scroll-mt-24 space-y-6">
-            <h2 className="font-display text-lg font-extrabold uppercase tracking-wide text-black">Outcomes &amp; Learning</h2>
             <LearningCard learning={data.learning} />
             <OutcomeCard outcome={action?.outcome} />
             <ActivityTimeline events={action?.timeline} />
-          </section>
+          </div>
+        </section>
 
-          <footer className="border-t-[3px] border-black pb-6 pt-4 text-center text-xs font-medium text-black/50">
-            Prototype running fully locally with Ollama qwen3:4b. All recovery actions are SIMULATED; no real Paytm
-            transactions are changed.
-          </footer>
-        </main>
-      </div>
+        <footer className="pb-6 text-center text-xs text-slate-400">
+          Prototype running fully locally with Ollama qwen3:4b. All recovery actions are SIMULATED; no real Paytm
+          transactions are changed.
+        </footer>
+      </main>
 
       <ApprovalModal open={modalOpen} action={action} flow={flow} outcome={action?.outcome}
         onConfirm={confirmApprove} onClose={() => setModalOpen(false)} />

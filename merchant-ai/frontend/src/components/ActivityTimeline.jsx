@@ -18,8 +18,7 @@ const TITLES = {
 
 export default function ActivityTimeline({ events }) {
   return (
-    <div className="card">
-      <h2 className="font-display text-sm font-bold tracking-wide text-slate-900">Activity Timeline</h2>
+    <div className="card-border rounded-xl bg-white p-5 shadow-sm">      <h2 className="text-sm font-bold tracking-wide text-slate-900">ACTIVITY TIMELINE</h2>
       {!events || events.length === 0 ? (
         <div className="py-6 text-center text-sm text-slate-400">No activity yet.</div>
       ) : (

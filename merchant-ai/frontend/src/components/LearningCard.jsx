@@ -5,9 +5,8 @@ export default function LearningCard({ learning }) {
   if (!learning) return null;
   const rows = Object.entries(learning);
   return (
-    <div className="card">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="font-display text-sm font-bold tracking-wide text-slate-900">AI Learning</h2>
+    <div className="card-border rounded-xl bg-white p-5 shadow-sm">      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-sm font-bold tracking-wide text-slate-900">AI LEARNING</h2>
         <Badge tone="blue">Updates after each recovery</Badge>
       </div>
       <p className="mt-1 text-xs text-slate-400">
