@@ -11,21 +11,22 @@ export default function ApprovalModal({ open, action, flow, outcome, onConfirm, 
   const done = flow.step === "done";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-      <div className="card-border w-full max-w-lg rounded-xl bg-white p-6 shadow-xl">        <div className="flex items-start justify-between gap-3">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+      <div className="w-full max-w-lg animate-fade-in-up border-[3px] border-black bg-white p-6 shadow-brutal-lg">
+        <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-base font-bold text-slate-900">
-              {done ? "RECOVERY COMPLETED" : "Approve recovery action"}
+            <h3 className="font-display text-base font-extrabold uppercase tracking-wide text-black">
+              {done ? "Recovery Completed" : "Approve recovery action"}
             </h3>
-            <p className="text-sm text-slate-500">{action.title}</p>
+            <p className="text-sm font-medium text-black/60">{action.title}</p>
           </div>
-          <Badge tone="blue">SIMULATED RECOVERY</Badge>
+          <Badge tone="blue">Simulated Recovery</Badge>
         </div>
 
         {!done && (
-          <div className="mt-4 space-y-2 text-sm text-slate-600">
+          <div className="mt-4 space-y-2 text-sm font-medium text-black/70">
             <p>{action.description}</p>
-            <p className="rounded-lg bg-slate-50 p-3 text-xs text-slate-500">
+            <p className="border-[2px] border-black bg-slate-50 p-3 text-xs text-black/60">
               This is a simulated merchant environment. No real Paytm transaction will be changed and no payment API
               is called.
             </p>
@@ -38,35 +39,33 @@ export default function ApprovalModal({ open, action, flow, outcome, onConfirm, 
             const active = i === progress && working;
             return (
               <li key={s} className="flex items-center gap-3 text-sm">
-                <span className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold ${
-                  complete ? "bg-emerald-500 text-white" : active ? "animate-pulse bg-paytm-blue text-white" : "bg-slate-200 text-slate-500"}`}>
+                <span className={`flex h-6 w-6 items-center justify-center border-[2px] border-black text-[10px] font-extrabold ${
+                  complete ? "bg-emerald-400" : active ? "animate-pulse bg-paytm-blue" : "bg-white text-black"}`}>
                   {complete ? "✓" : i + 1}
                 </span>
-                <span className={complete || active ? "font-medium text-slate-900" : "text-slate-400"}>{s}</span>
+                <span className={complete || active ? "font-bold text-black" : "text-black/40"}>{s}</span>
               </li>
             );
           })}
         </ol>
 
         {done && outcome && (
-          <div className="mt-5 grid grid-cols-2 gap-3 rounded-lg bg-emerald-50 p-4 text-sm">
-            <div><div className="text-xs text-emerald-700">Recovered Transactions</div><div className="text-lg font-bold">{outcome.recovered_transactions}</div></div>
-            <div><div className="text-xs text-emerald-700">Recovered Revenue</div><div className="text-lg font-bold">₹{outcome.recovered_revenue.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</div></div>
+          <div className="mt-5 grid grid-cols-2 gap-3 border-[2px] border-black bg-emerald-50 p-4 text-sm">
+            <div><div className="text-xs font-bold text-emerald-800">Recovered Transactions</div><div className="text-lg font-extrabold">{outcome.recovered_transactions}</div></div>
+            <div><div className="text-xs font-bold text-emerald-800">Recovered Revenue</div><div className="text-lg font-extrabold">₹{outcome.recovered_revenue.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</div></div>
           </div>
         )}
 
-        {flow.error && <div className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{flow.error}</div>}
+        {flow.error && <div className="mt-4 border-[2px] border-black bg-red-100 p-3 text-sm font-semibold text-red-900">{flow.error}</div>}
 
         <div className="mt-6 flex justify-end gap-2">
-          <button onClick={onClose} disabled={working}
-            className="rounded-lg border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50">
-            {done ? "CLOSE" : "CANCEL"}
+          <button onClick={onClose} disabled={working} className="nb-btn nb-btn-ghost">
+            {done ? "Close" : "Cancel"}
           </button>
-                    {!done && (
+          {!done && (
             <ClickSpark sparkColor="#00B9F1" sparkSize={8} sparkRadius={16} sparkCount={8} duration={400}>
-              <button onClick={onConfirm} disabled={working}
-                className="rounded-lg bg-paytm-navy px-4 py-2 text-xs font-semibold text-white hover:bg-[#001f55] disabled:opacity-50">
-                {working ? "WORKING…" : "APPROVE RECOVERY ACTION"}
+              <button onClick={onConfirm} disabled={working} className="nb-btn nb-btn-primary">
+                {working ? "Working…" : "Approve recovery action"}
               </button>
             </ClickSpark>
           )}

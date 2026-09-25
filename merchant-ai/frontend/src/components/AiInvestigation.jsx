@@ -12,7 +12,7 @@ function Section({ title, children }) {
 function FactRow({ f }) {
   return (
     <li className="flex gap-2 text-sm text-slate-700">
-      <Badge tone="blue">FACT</Badge>
+      <Badge tone="blue">Fact</Badge>
       <span>
         <span className="mr-1 font-mono text-xs text-slate-400">{f.id}</span>
         {f.text}
@@ -23,8 +23,9 @@ function FactRow({ f }) {
 
 export default function AiInvestigation({ investigation, running, stage }) {
   return (
-    <div className="card-border rounded-xl bg-white p-5 shadow-sm">      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-sm font-bold tracking-wide text-slate-900">AI INVESTIGATION</h2>
+    <div className="card">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="font-display text-sm font-bold tracking-wide text-slate-900">AI Investigation</h2>
         {investigation && (
           <span className="text-xs text-slate-400">
             {investigation.generated_by} · {investigation.duration_seconds}s
@@ -40,7 +41,7 @@ export default function AiInvestigation({ investigation, running, stage }) {
 
       {!investigation && !running && (
         <div className="py-10 text-center text-sm text-slate-400">
-          No investigation yet. Click <span className="font-semibold text-slate-600">RUN AI INVESTIGATION</span>.
+          No investigation yet. Click <span className="font-semibold text-slate-600">Run AI Investigation</span>.
         </div>
       )}
 
@@ -51,7 +52,7 @@ export default function AiInvestigation({ investigation, running, stage }) {
               {investigation.what_happened.facts.map((f) => <FactRow key={f.id} f={f} />)}
             </ul>
             <div className="flex gap-2 text-sm text-slate-700">
-              <Badge tone="amber">INFERENCE</Badge>
+              <Badge tone="amber">Inference</Badge>
               <span>{investigation.what_happened.narrative}</span>
             </div>
           </Section>
@@ -65,7 +66,7 @@ export default function AiInvestigation({ investigation, running, stage }) {
 
           <Section title="Likely root cause">
             <div className="flex gap-2 text-sm text-slate-700">
-              <Badge tone="amber">INFERENCE</Badge>
+              <Badge tone="amber">Inference</Badge>
               <span>
                 {investigation.likely_root_cause.text}{" "}
                 <span className="text-xs text-slate-400">(confidence: {investigation.likely_root_cause.confidence})</span>
@@ -93,7 +94,7 @@ export default function AiInvestigation({ investigation, running, stage }) {
 
           <Section title="Recommended action">
             <div className="flex gap-2 text-sm text-slate-700">
-              <Badge tone="amber">INFERENCE</Badge>
+              <Badge tone="amber">Inference</Badge>
               <span>{investigation.recommended_action.text}</span>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
@@ -106,7 +107,7 @@ export default function AiInvestigation({ investigation, running, stage }) {
             <Section title="AI Reviewer (second-pass self-check)">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone={investigation.ai_review.verdict === "flagged" ? "amber" : investigation.ai_review.verdict === "pass" ? "green" : "slate"}>
-                  {investigation.ai_review.verdict === "flagged" ? "FLAGGED" : investigation.ai_review.verdict === "pass" ? "PASSED REVIEW" : "REVIEW UNKNOWN"}
+                  {investigation.ai_review.verdict === "flagged" ? "Flagged" : investigation.ai_review.verdict === "pass" ? "Passed review" : "Review unknown"}
                 </Badge>
                 <span className="text-sm text-slate-700">{investigation.ai_review.summary}</span>
               </div>
